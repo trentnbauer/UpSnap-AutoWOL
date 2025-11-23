@@ -25,7 +25,7 @@ def authenticate():
         response.raise_for_status()
         return response.json().get("token")
     except requests.RequestException as e:
-        print(f"Error during authentication: {e}", flush=True)
+        print(f"⛔ Error during authentication: {e}", flush=True)
         return None
 
 def get_devices(token):
