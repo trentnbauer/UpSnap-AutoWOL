@@ -1,2 +1,7 @@
 # UPSNAP-AutoWOL
-Automate waking up machines
+
+## Requirements
+* [UpSnap](https://github.com/seriousm4x/UpSnap)
+
+## Intended workflow
+
