@@ -1,0 +1,26 @@
+services:
+  upsnap:
+    image: ghcr.io/seriousm4x/upsnap:5 # images are also available on docker hub: seriousm4x/upsnap:5
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - data:/app/pb_data
+      
+  autowol:
+    image: ghcr.io/trentnbauer/upsnap-autowol:latest
+    restart: always
+    environment:
+      - UPSNAP_URL=${UPSNAPURL:-http://localhost:8090}
+      - UPSNAP_USERNAME=${USERNAME}
+      - UPSNAP_PASSWORD=${PASSWORD}
+      - UPSNAP_DELAY=${DELAY:-10} # Time in minutes to wait before sending WOL packets
+    healthcheck:
+      # Check if we can reach the UpSnap server
+      test: ["CMD", "curl", "-f", "${UPSNAP_URL}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  data:
