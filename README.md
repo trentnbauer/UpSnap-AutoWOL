@@ -5,7 +5,9 @@ I think this is a niche tool but I thought I would share it. ChatGPT wrote the s
 This script will wait x minutes, then send WOL packets to everything in UpSnap.
 
 ## Requirements
-* [UpSnap](https://github.com/seriousm4x/UpSnap)
+* [UpSnap](https://github.com/seriousm4x/UpSnap) (included in my example compose file, but VERY basic. I recommend reading the UpSnap file and adding the AutoWOL container to that instead
+* An account set up in UpSnap
+* Devices set up in UpSnap
 
 ### Configuration Variables
 
