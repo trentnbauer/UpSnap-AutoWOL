@@ -1,44 +1,25 @@
 import requests
 import time
-import argparse
+import os
 import sys
 
-# Function to parse command line arguments
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="UpSnap Wake-on-LAN Automation Script")
-    
-    parser.add_argument(
-        "--url", 
-        required=True, 
-        help="The base URL of the UpSnap instance (e.g., http://localhost:8090)"
-    )
-    
-    parser.add_argument(
-        "--username", 
-        required=True, 
-        help="The username for authentication"
-    )
-    
-    parser.add_argument(
-        "--password", 
-        required=True, 
-        help="The password for authentication"
-    )
-    
-    parser.add_argument(
-        "--delay", 
-        type=int, 
-        required=True, 
-        help="Time to wait in seconds before running (e.g., 600 for 10 minutes)"
-    )
+# Load Environment Variables
+UPSNAP_URL = os.getenv("UPSNAP_URL")
+UPSNAP_USERNAME = os.getenv("UPSNAP_USERNAME")
+UPSNAP_PASSWORD = os.getenv("UPSNAP_PASSWORD")
+# Default to 600 seconds (10 minutes) if not set
+DELAY = int(os.getenv("UPSNAP_DELAY", "600")) 
 
-    return parser.parse_args()
+# specific check to ensure variables exist
+if not all([UPSNAP_URL, UPSNAP_USERNAME, UPSNAP_PASSWORD]):
+    print("Error: Missing required environment variables.")
+    print("Please set UPSNAP_URL, UPSNAP_USERNAME, and UPSNAP_PASSWORD.")
+    sys.exit(1)
 
-# Function to authenticate and get token
-def authenticate(base_url, username, password):
+def authenticate():
     print("Authenticating...")
-    auth_url = f"{base_url}/api/collections/users/auth-with-password"
-    auth_data = {"identity": username, "password": password}
+    auth_url = f"{UPSNAP_URL}/api/collections/users/auth-with-password"
+    auth_data = {"identity": UPSNAP_USERNAME, "password": UPSNAP_PASSWORD}
     try:
         response = requests.post(auth_url, json=auth_data)
         response.raise_for_status()
@@ -47,11 +28,10 @@ def authenticate(base_url, username, password):
         print(f"Error during authentication: {e}")
         return None
 
-# Function to get all devices
-def get_devices(base_url, token):
+def get_devices(token):
     print("Getting list of devices...")
     headers = {'Authorization': f'Bearer {token}'}
-    devices_url = f"{base_url}/api/collections/devices/records"
+    devices_url = f"{UPSNAP_URL}/api/collections/devices/records"
     try:
         response = requests.get(devices_url, headers=headers)
         response.raise_for_status()
@@ -60,11 +40,10 @@ def get_devices(base_url, token):
         print(f"Error retrieving devices: {e}")
         return None
 
-# Function to send WOL packet
-def wake_device(base_url, token, device_id):
+def wake_device(token, device_id):
     print(f"Sending WOL packet to device {device_id}...")
     headers = {'Authorization': f'Bearer {token}'}
-    wake_url = f"{base_url}/api/upsnap/wake/{device_id}"
+    wake_url = f"{UPSNAP_URL}/api/upsnap/wake/{device_id}"
     try:
         response = requests.get(wake_url, headers=headers)
         response.raise_for_status()
@@ -72,23 +51,18 @@ def wake_device(base_url, token, device_id):
     except requests.RequestException as e:
         print(f"Error sending WOL packet to device {device_id}: {e}")
 
-# Main script
 def main():
-    # Parse switches
-    args = parse_arguments()
+    print(f"Script started. Waiting for {DELAY} seconds...")
+    # Health check depends on the container running, so we sleep first
+    time.sleep(DELAY) 
 
-    print(f"Script started. Waiting for {args.delay} seconds...")
-    time.sleep(args.delay)
-
-    # Authenticate using provided args
-    token = authenticate(args.url, args.username, args.password)
+    token = authenticate()
 
     if token:
-        # Get devices using provided args
-        devices = get_devices(args.url, token)
+        devices = get_devices(token)
         if devices:
             for device in devices.get("items", []):
-                wake_device(args.url, token, device.get("id")) 
+                wake_device(token, device.get("id")) 
 
 if __name__ == "__main__":
     main()
