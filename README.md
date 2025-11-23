@@ -1,9 +1,20 @@
+### VIBE CODED BY CHATGPT AND GEMINI
+
 # UPSNAP-AutoWOL
 I think this is a niche tool but I thought I would share it. ChatGPT wrote the script a couple of years ago for me and I've been running it as a CRON  job on the machine hosting UpSnap.
 This script will wait x minutes, then send WOL packets to everything in UpSnap.
 
 ## Requirements
 * [UpSnap](https://github.com/seriousm4x/UpSnap)
+
+### Configuration Variables
+
+| Variable | Required | Description | Example |
+| :--- | :---: | :--- | :--- |
+| `UPSNAP_URL` | **Yes** | The base URL of your UpSnap instance. Do not include a trailing slash. | `http://localhost:8090` |
+| `UPSNAP_USERNAME` | **Yes** | The username used to log into UpSnap. | `admin` |
+| `UPSNAP_PASSWORD` | **Yes** | The password associated with the username. | `secure_password_123` |
+| `UPSNAP_DELAY` | No | The time to wait **(in minutes)** after the container starts before sending the Wake-on-LAN packets. Defaults to `0` if not set. | `5` |
 
 ## How I use this
 I have a Dell Wyse 5070 plugged directly into mains power running UpSnap, among some other things. The rest of my infrastructure is behind a UPS.
