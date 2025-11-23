@@ -6,21 +6,17 @@ services:
     volumes:
       - data:/app/pb_data
       
+# I HIGHLY RECOMMEND LOOKING AT THE UPSNAP DOCO, THEN ADDING MY STUFF (BELOW) TO YOUR COMPOSE FILE   
+
   autowol:
     image: ghcr.io/trentnbauer/upsnap-autowol:latest
     restart: always
+    network_mode: host # * May break "localhost" for the UpSnap URL variable
     environment:
-      - UPSNAP_URL=${UPSNAPURL:-http://localhost:8090}
+      - UPSNAP_URL=${UPSNAPURL:-http://localhost:8090} # *
       - UPSNAP_USERNAME=${USERNAME}
       - UPSNAP_PASSWORD=${PASSWORD}
       - UPSNAP_DELAY=${DELAY:-10} # Time in minutes to wait before sending WOL packets
-    healthcheck:
-      # Check if we can reach the UpSnap server
-      test: ["CMD", "curl", "-f", "${UPSNAP_URL}"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
 volumes:
   data:
