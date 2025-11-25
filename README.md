@@ -3,7 +3,8 @@
 
 # UPSNAP-AutoWOL
 I think this is a niche tool but I thought I would share it. ChatGPT wrote the script a year or 2 ago for me and I've been running it as a CRON job on the machine hosting UpSnap. I've moved it to a docker container so its easier to replicate in the future
-This script will wait x minutes, then send WOL packets to everything in UpSnap.
+
+This script will wait x minutes, then send WOL packets to everything it can.
 
 ## Requirements
 * [UpSnap](https://github.com/seriousm4x/UpSnap) (included in my example compose file, but VERY basic. I recommend reading the UpSnap file and adding the AutoWOL container to that instead
