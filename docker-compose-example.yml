@@ -14,14 +14,14 @@ services:
   autowol:
     image: ghcr.io/trentnbauer/upsnap-autowol:latest
     restart: always
-    network_mode: host # * May break "localhost" for the UpSnap URL variable - you may need to set the variable to the machines IP/DNS name
+    network_mode: host # *May break "localhost" for the UpSnap URL variable - you may need to set the variable to the machines IP/DNS name
     environment:
       - UPSNAP_URL=${UPSNAPURL:-http://localhost:8090} # *
       - UPSNAP_USERNAME=${USERNAME}
       - UPSNAP_PASSWORD=${PASSWORD}
       - UPSNAP_DELAY=${DELAY:-10} # Time in minutes to wait before sending WOL packets
     healthcheck:
-      # Tries to reach UPSNAP_URL. If variable is unset, defaults to localhost:8090.
+      # *Tries to reach UPSNAP_URL. If variable is unset, defaults to localhost:8090.
       test: ["CMD-SHELL", "curl -f ${UPSNAP_URL:-http://localhost:8090} || exit 1"]
       interval: 30s
       timeout: 10s
